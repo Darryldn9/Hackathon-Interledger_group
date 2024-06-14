@@ -9,7 +9,7 @@ def get_subscription(db: Session, subscription_id: int):
     return db.query(models.Subscription).filter(models.Subscription.id == subscription_id).first()
 
 def create_subscription(db: Session, subscription: schemas.SubscriptionCreate):
-    db_subscription = models.Subscription(**subscription.dict())
+    db_subscription = models.Subscription(**subscription.dict(), payment_date=None)
     db.add(db_subscription)
     db.commit()
     db.refresh(db_subscription)

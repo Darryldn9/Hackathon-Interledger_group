@@ -17,7 +17,7 @@
         <tr>
             <td>{{ subscription.name }}</td>
             <td>{{ subscription.payment_amount }}</td>
-            <td>{{ subscription.payment_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ subscription.payment_date.strftime('%Y-%m-%d') if subscription.payment_date else 'N/A' }}</td>
             <td>{{ subscription.repayment_date }}</td>
             <td>{{ subscription.status }}</td>
             <td>

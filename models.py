@@ -9,7 +9,7 @@ class Subscription(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     payment_amount = Column(Integer)
-    payment_date = Column(DateTime, default=datetime.datetime.utcnow)
+    payment_date = Column(DateTime, nullable=True)  # Initialize as None
     repayment_date = Column(String, default="01-01")  # Default to January 1st
     status = Column(String, default="unpaid")
     account_id = Column(Integer, ForeignKey("accounts.id"), nullable=True)

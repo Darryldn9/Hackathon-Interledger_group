@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, Request, Form, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 import crud, models, schemas
 from database import SessionLocal, engine
@@ -11,6 +12,8 @@ from datetime import datetime
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 templates = Jinja2Templates(directory="templates")
 
 # Dependency to get the database session
@@ -121,9 +124,9 @@ def add_account_form(request: Request):
     return templates.TemplateResponse("add_account.html", {"request": request})
 
 @app.post("/accounts/add/")
-def add_account(account_name: str = Form(...), account_type: str = Form(...), balance: int = Form(...), db: Session = Depends(get_db)):
+def add_account(account_name: str = Form(...), account_type: str = Form(...), db: Session = Depends(get_db)):
     try:
-        account = schemas.AccountCreate(account_name=account_name, account_type=account_type, balance=balance)
+        account = schemas.AccountCreate(account_name=account_name, account_type=account_type)
         crud.create_account(db=db, account=account)
         return RedirectResponse(url="/accounts/", status_code=303)
     except Exception as e:

@@ -5,18 +5,18 @@ from typing import Optional
 class SubscriptionBase(BaseModel):
     name: str
     payment_amount: int
-    repayment_date: str  # Accept month and day only
+    repayment_date: str  # Accept only the day
 
 class SubscriptionCreate(SubscriptionBase):
     pass
 
 class SubscriptionUpdate(SubscriptionBase):
-    payment_date: datetime
+    payment_date: Optional[datetime] = None
     status: str
 
 class Subscription(SubscriptionBase):
     id: int
-    payment_date: datetime
+    payment_date: Optional[datetime] = None
     status: str
     account_id: Optional[int] = None
 
@@ -26,7 +26,6 @@ class Subscription(SubscriptionBase):
 class AccountBase(BaseModel):
     account_name: str
     account_type: str
-    balance: int
 
 class AccountCreate(AccountBase):
     pass
