@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add Account</h2>
+<form method="post" action="/accounts/add/" class="needs-validation" novalidate>
+    <div class="form-group">
+        <label for="account_type">Account Type</label>
+        <select id="account_type" name="account_type" class="form-control" required>
+            <option value="Bank Account">Bank Account</option>
+            <option value="Mobile Money">Mobile Money</option>
+        </select>
+        <div class="invalid-feedback">
+            Please select an account type.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="balance">Balance</label>
+        <input type="number" id="balance" name="balance" class="form-control" required>
+        <div class="invalid-feedback">
+            Please provide a balance.
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Account</button>
+</form>
+<script>
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %}

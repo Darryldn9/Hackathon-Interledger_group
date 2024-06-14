@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Subscription</h2>
+<form method="post" action="/subscriptions/edit/{{ subscription.id }}" class="needs-validation" novalidate>
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" class="form-control" value="{{ subscription.name }}" required>
+        <div class="invalid-feedback">
+            Please provide a name.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="payment_amount">Payment Amount</label>
+        <input type="number" id="payment_amount" name="payment_amount" class="form-control" value="{{ subscription.payment_amount }}" required>
+        <div class="invalid-feedback">
+            Please provide a payment amount.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="payment_date">Payment Date</label>
+        <input type="date" id="payment_date" name="payment_date" class="form-control" value="{{ subscription.payment_date.strftime('%Y-%m-%d') }}" required>
+        <div class="invalid-feedback">
+            Please provide a payment date.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="repayment_date">Repayment Date</label>
+        <input type="date" id="repayment_date" name="repayment_date" class="form-control" value="{{ subscription.repayment_date.strftime('%Y-%m-%d') }}" required>
+        <div class="invalid-feedback">
+            Please provide a repayment date.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" name="status" class="form-control" required>
+            <option value="unpaid" {% if subscription.status == "unpaid" %}selected{% endif %}>Unpaid</option>
+            <option value="paid" {% if subscription.status == "paid" %}selected{% endif %}>Paid</option>
+        </select>
+        <div class="invalid-feedback">
+            Please select a status.
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+<script>
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %}

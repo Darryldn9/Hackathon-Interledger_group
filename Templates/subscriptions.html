@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Subscriptions</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Amount</th>
+            <th>Payment Date</th>
+            <th>Repayment Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for subscription in subscriptions %}
+        <tr>
+            <td>{{ subscription.name }}</td>
+            <td>{{ subscription.payment_amount }}</td>
+            <td>{{ subscription.payment_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ subscription.repayment_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ subscription.status }}</td>
+            <td>
+                <a href="/subscriptions/edit/{{ subscription.id }}" class="btn btn-primary btn-sm">Edit</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="/subscriptions/add/" class="btn btn-primary">Add New Subscription</a>
+{% endblock %}
