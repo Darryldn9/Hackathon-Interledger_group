@@ -4,15 +4,21 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Account Type</th>
-            <th>Balance</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
         {% for account in accounts %}
         <tr>
+            <td>{{ account.account_name }}</td>
             <td>{{ account.account_type }}</td>
-            <td>{{ account.balance }}</td>
+            <td>
+                <form method="post" action="/accounts/connect/{{ account.id }}" style="display:inline;">
+                    <button type="submit" class="btn btn-success btn-sm">Connect</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

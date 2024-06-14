@@ -9,6 +9,7 @@
             <th>Payment Date</th>
             <th>Repayment Date</th>
             <th>Status</th>
+            <th>Days Until Next Repayment</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -20,6 +21,7 @@
             <td>{{ subscription.payment_date.strftime('%Y-%m-%d') if subscription.payment_date else 'N/A' }}</td>
             <td>{{ subscription.repayment_date }}</td>
             <td>{{ subscription.status }}</td>
+            <td>{{ subscription.days_until_next_repayment }}</td>
             <td>
                 <a href="/subscriptions/edit/{{ subscription.id }}" class="btn btn-primary btn-sm">Edit</a>
                 <form method="post" action="/subscriptions/pay/{{ subscription.id }}" style="display:inline;">

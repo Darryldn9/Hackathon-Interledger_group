@@ -37,6 +37,8 @@ def read_root(request: Request, db: Session = Depends(get_db)):
 def read_subscriptions(request: Request, db: Session = Depends(get_db)):
     try:
         subscriptions = crud.get_subscriptions(db)
+        for subscription in subscriptions:
+            subscription.days_until_next_repayment = crud.get_days_until_next_repayment(subscription)
         return templates.TemplateResponse("subscriptions.html", {"request": request, "subscriptions": subscriptions})
     except Exception as e:
         logging.error(f"Error fetching subscriptions data: {e}")
@@ -81,13 +83,13 @@ def edit_subscription(
     subscription_id: int,
     name: str = Form(...),
     payment_amount: int = Form(...),
-    payment_date: str = Form(...),
+    payment_date: str = Form(None),
     repayment_date: str = Form(...),
     status: str = Form(...),
     db: Session = Depends(get_db)
 ):
     try:
-        payment_date = datetime.strptime(payment_date, "%Y-%m-%d")
+        payment_date = datetime.strptime(payment_date, "%Y-%m-%d") if payment_date else None
         subscription = schemas.SubscriptionUpdate(
             name=name,
             payment_amount=payment_amount,
@@ -131,4 +133,13 @@ def add_account(account_name: str = Form(...), account_type: str = Form(...), db
         return RedirectResponse(url="/accounts/", status_code=303)
     except Exception as e:
         logging.error(f"Error adding account: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@app.post("/accounts/connect/{account_id}")
+def connect_account(account_id: int, db: Session = Depends(get_db)):
+    try:
+        crud.connect_account(db=db, account_id=account_id)
+        return RedirectResponse(url="/accounts/", status_code=303)
+    except Exception as e:
+        logging.error(f"Error connecting account: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
