@@ -18,10 +18,13 @@
             <td>{{ subscription.name }}</td>
             <td>{{ subscription.payment_amount }}</td>
             <td>{{ subscription.payment_date.strftime('%Y-%m-%d') }}</td>
-            <td>{{ subscription.repayment_date.strftime('%Y-%m-%d') }}</td>
+            <td>{{ subscription.repayment_date }}</td>
             <td>{{ subscription.status }}</td>
             <td>
                 <a href="/subscriptions/edit/{{ subscription.id }}" class="btn btn-primary btn-sm">Edit</a>
+                <form method="post" action="/subscriptions/pay/{{ subscription.id }}" style="display:inline;">
+                    <button type="submit" class="btn btn-success btn-sm">Pay</button>
+                </form>
             </td>
         </tr>
         {% endfor %}

@@ -47,20 +47,14 @@ def add_subscription_form(request: Request):
 def add_subscription(
     name: str = Form(...),
     payment_amount: int = Form(...),
-    payment_date: str = Form(...),
     repayment_date: str = Form(...),
-    status: str = Form(...),
     db: Session = Depends(get_db)
 ):
     try:
-        payment_date = datetime.strptime(payment_date, "%Y-%m-%d")
-        repayment_date = datetime.strptime(repayment_date, "%Y-%m-%d")
         subscription = schemas.SubscriptionCreate(
             name=name,
             payment_amount=payment_amount,
-            payment_date=payment_date,
-            repayment_date=repayment_date,
-            status=status
+            repayment_date=repayment_date
         )
         crud.create_subscription(db=db, subscription=subscription)
         return RedirectResponse(url="/subscriptions/", status_code=303)
@@ -91,7 +85,6 @@ def edit_subscription(
 ):
     try:
         payment_date = datetime.strptime(payment_date, "%Y-%m-%d")
-        repayment_date = datetime.strptime(repayment_date, "%Y-%m-%d")
         subscription = schemas.SubscriptionUpdate(
             name=name,
             payment_amount=payment_amount,
@@ -103,6 +96,15 @@ def edit_subscription(
         return RedirectResponse(url="/subscriptions/", status_code=303)
     except Exception as e:
         logging.error(f"Error editing subscription: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@app.post("/subscriptions/pay/{subscription_id}")
+def pay_subscription(subscription_id: int, db: Session = Depends(get_db)):
+    try:
+        crud.make_payment(db=db, subscription_id=subscription_id)
+        return RedirectResponse(url="/subscriptions/", status_code=303)
+    except Exception as e:
+        logging.error(f"Error making payment for subscription: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @app.get("/accounts/")
@@ -119,9 +121,9 @@ def add_account_form(request: Request):
     return templates.TemplateResponse("add_account.html", {"request": request})
 
 @app.post("/accounts/add/")
-def add_account(account_type: str = Form(...), balance: int = Form(...), db: Session = Depends(get_db)):
+def add_account(account_name: str = Form(...), account_type: str = Form(...), balance: int = Form(...), db: Session = Depends(get_db)):
     try:
-        account = schemas.AccountCreate(account_type=account_type, balance=balance)
+        account = schemas.AccountCreate(account_name=account_name, account_type=account_type, balance=balance)
         crud.create_account(db=db, account=account)
         return RedirectResponse(url="/accounts/", status_code=303)
     except Exception as e:

@@ -3,6 +3,13 @@
 <h2>Add Account</h2>
 <form method="post" action="/accounts/add/" class="needs-validation" novalidate>
     <div class="form-group">
+        <label for="account_name">Account Name</label>
+        <input type="text" id="account_name" name="account_name" class="form-control" required>
+        <div class="invalid-feedback">
+            Please provide an account name.
+        </div>
+    </div>
+    <div class="form-group">
         <label for="account_type">Account Type</label>
         <select id="account_type" name="account_type" class="form-control" required>
             <option value="Bank Account">Bank Account</option>
@@ -10,13 +17,6 @@
         </select>
         <div class="invalid-feedback">
             Please select an account type.
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="balance">Balance</label>
-        <input type="number" id="balance" name="balance" class="form-control" required>
-        <div class="invalid-feedback">
-            Please provide a balance.
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Add Account</button>

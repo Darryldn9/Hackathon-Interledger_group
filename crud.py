@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 import models, schemas
+from datetime import datetime
 
 def get_subscriptions(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Subscription).offset(skip).limit(limit).all()
@@ -20,6 +21,16 @@ def update_subscription(db: Session, subscription_id: int, subscription: schemas
         return None
     for key, value in subscription.dict().items():
         setattr(db_subscription, key, value)
+    db.commit()
+    db.refresh(db_subscription)
+    return db_subscription
+
+def make_payment(db: Session, subscription_id: int):
+    db_subscription = db.query(models.Subscription).filter(models.Subscription.id == subscription_id).first()
+    if db_subscription is None:
+        return None
+    db_subscription.status = "paid"
+    db_subscription.payment_date = datetime.utcnow()
     db.commit()
     db.refresh(db_subscription)
     return db_subscription
