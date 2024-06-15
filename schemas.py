@@ -6,6 +6,7 @@ class SubscriptionBase(BaseModel):
     name: str
     payment_amount: int
     repayment_date: str  # Accept only the day
+    payment_pointer: Optional[str] = None
 
 class SubscriptionCreate(SubscriptionBase):
     pass

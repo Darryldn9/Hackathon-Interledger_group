@@ -10,9 +10,10 @@ class Subscription(Base):
     name = Column(String, index=True)
     payment_amount = Column(Integer)
     payment_date = Column(DateTime, nullable=True)  # Initialize as None
-    repayment_date = Column(String, default="01-01")  # Default to January 1st
+    repayment_date = Column(String, default="01")  # Default to the first day of the month
     status = Column(String, default="unpaid")
     account_id = Column(Integer, ForeignKey("accounts.id"), nullable=True)
+    payment_pointer = Column(String, nullable=True)
 
     account = relationship("Account", back_populates="subscriptions")
 
@@ -22,6 +23,5 @@ class Account(Base):
     id = Column(Integer, primary_key=True, index=True)
     account_name = Column(String)
     account_type = Column(String)
-    balance = Column(Integer)
 
     subscriptions = relationship("Subscription", back_populates="account")
