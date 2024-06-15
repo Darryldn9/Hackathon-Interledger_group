@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, Request, Form, HTTPException
+from fastapi import FastAPI, Depends, Request, Form, HTTPException, Query
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -7,6 +7,16 @@ import crud, models, schemas
 from database import SessionLocal, engine
 import logging
 from datetime import datetime
+from pydantic import BaseModel
+from sqlalchemy import text
+
+class PaymentRequest(BaseModel):
+    amount: float
+    from_wallet: str
+    to_wallet: str
+
+    class Config:
+        extra = 'allow'
 
 # Create the database tables
 models.Base.metadata.create_all(bind=engine)
@@ -202,3 +212,52 @@ def edit_user(
     except Exception as e:
         logging.error(f"Error editing user: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+    
+@app.get("/reciever_details")
+async def reciever_details(subscription_id: int = Query(...), db=Depends(get_db)):
+    try:
+        query = text("SELECT * FROM subscriptions WHERE id = :id")
+        result = db.execute(query, {"id": subscription_id}).fetchone()
+
+        if result:
+            return {
+                "receiver_name": result.name,
+                "payment_endpoint": result.payment_pointer,
+            }
+        else:
+            raise HTTPException(status_code=404, detail="Subscription not found")
+    
+    # http://127.0.0.1:8000/reciever_details?subscription_id=1
+    except Exception as e:
+        logging.error(f"Error fetching subscription details: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+    
+@app.get("/sender_details")
+async def sender_details(db=Depends(get_db)):
+    try:
+        query_reciever = "Darryl Nyamayaro"
+        query = text("SELECT * FROM subscriptions WHERE name = :name")
+        result = db.execute(query, {"name": query_reciever}).fetchone()
+
+        if result:
+            # Adjust the response format based on what you want to return
+            return {"receiver_name": result.name, "payment_endpoing": result.payment_pointer}
+        else:
+            raise HTTPException(status_code=404, detail="Receiver not found")
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/pay")
+async def pay(payment: PaymentRequest):
+    amount = payment.amount
+    from_wallet = payment.from_wallet
+    to_wallet = payment.to_wallet
+
+    
+
+
+
+
+
+
