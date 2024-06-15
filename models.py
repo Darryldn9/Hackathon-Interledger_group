@@ -25,3 +25,14 @@ class Account(Base):
     account_type = Column(String)
 
     subscriptions = relationship("Subscription", back_populates="account")
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String)
+    surname = Column(String)
+    home_address = Column(String)
+    number = Column(String)
+    email = Column(String)
+    preferred_contact_method = Column(String)

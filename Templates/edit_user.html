@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Next of kin Information</h2>
+<form method="post" action="/user/edit/" class="needs-validation" novalidate>
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" class="form-control" value="{{ user.name if user else '' }}" required>
+        <div class="invalid-feedback">
+            Please provide a name.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" name="surname" class="form-control" value="{{ user.surname if user else '' }}" required>
+        <div class="invalid-feedback">
+            Please provide a surname.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="home_address">Home Address</label>
+        <input type="text" id="home_address" name="home_address" class="form-control" value="{{ user.home_address if user else '' }}" required>
+        <div class="invalid-feedback">
+            Please provide a home address.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="number">Number</label>
+        <input type="text" id="number" name="number" class="form-control" value="{{ user.number if user else '' }}" required>
+        <div class="invalid-feedback">
+            Please provide a number.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" class="form-control" value="{{ user.email if user else '' }}" required>
+        <div class="invalid-feedback">
+            Please provide an email.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="preferred_contact_method">Preferred Contact Method for Reminders</label>
+        <select id="preferred_contact_method" name="preferred_contact_method" class="form-control" required>
+            <option value="email" {% if user and user.preferred_contact_method == 'email' %}selected{% endif %}>Email</option>
+            <option value="phone" {% if user and user.preferred_contact_method == 'phone' %}selected{% endif %}>Phone</option>
+            <option value="mail" {% if user and user.preferred_contact_method == 'mail' %}selected{% endif %}>Mail</option>
+        </select>
+        <div class="invalid-feedback">
+            Please select a preferred contact method.
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+<script>
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
+{% endblock %}

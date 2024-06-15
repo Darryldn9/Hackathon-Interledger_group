@@ -53,13 +53,15 @@ def add_subscription(
     name: str = Form(...),
     payment_amount: int = Form(...),
     repayment_date: str = Form(...),
+    payment_pointer: str = Form(None),  # Add payment_pointer field
     db: Session = Depends(get_db)
 ):
     try:
         subscription = schemas.SubscriptionCreate(
             name=name,
             payment_amount=payment_amount,
-            repayment_date=repayment_date
+            repayment_date=repayment_date,
+            payment_pointer=payment_pointer
         )
         crud.create_subscription(db=db, subscription=subscription)
         return RedirectResponse(url="/subscriptions/", status_code=303)
@@ -85,6 +87,7 @@ def edit_subscription(
     payment_amount: int = Form(...),
     payment_date: str = Form(None),
     repayment_date: str = Form(...),
+    payment_pointer: str = Form(None),  # Add payment_pointer field
     status: str = Form(...),
     db: Session = Depends(get_db)
 ):
@@ -95,12 +98,22 @@ def edit_subscription(
             payment_amount=payment_amount,
             payment_date=payment_date,
             repayment_date=repayment_date,
+            payment_pointer=payment_pointer,
             status=status
         )
         crud.update_subscription(db=db, subscription_id=subscription_id, subscription=subscription)
         return RedirectResponse(url="/subscriptions/", status_code=303)
     except Exception as e:
         logging.error(f"Error editing subscription: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@app.post("/subscriptions/delete/{subscription_id}")
+def delete_subscription(subscription_id: int, db: Session = Depends(get_db)):
+    try:
+        crud.delete_subscription(db=db, subscription_id=subscription_id)
+        return RedirectResponse(url="/subscriptions/", status_code=303)
+    except Exception as e:
+        logging.error(f"Error deleting subscription: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @app.post("/subscriptions/pay/{subscription_id}")
@@ -142,4 +155,50 @@ def connect_account(account_id: int, db: Session = Depends(get_db)):
         return RedirectResponse(url="/accounts/", status_code=303)
     except Exception as e:
         logging.error(f"Error connecting account: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@app.get("/user/")
+def get_user(request: Request, db: Session = Depends(get_db)):
+    try:
+        user = crud.get_user(db)
+        return templates.TemplateResponse("user.html", {"request": request, "user": user})
+    except Exception as e:
+        logging.error(f"Error fetching user data: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+@app.get("/user/edit/")
+def edit_user_form(request: Request, db: Session = Depends(get_db)):
+    user = crud.get_user(db)
+    return templates.TemplateResponse("edit_user.html", {"request": request, "user": user})
+
+@app.post("/user/edit/")
+def edit_user(
+    name: str = Form(...),
+    surname: str = Form(...),
+    home_address: str = Form(...),
+    number: str = Form(...),
+    email: str = Form(...),
+    preferred_contact_method: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    try:
+        user = schemas.UserCreate(
+            name=name,
+            surname=surname,
+            home_address=home_address,
+            number=number,
+            email=email,
+            preferred_contact_method=preferred_contact_method
+        )
+        existing_user = crud.get_user(db)
+        if existing_user:
+            for key, value in user.dict().items():
+                setattr(existing_user, key, value)
+            db.commit()
+            db.refresh(existing_user)
+        else:
+            crud.create_user(db=db, user=user)
+        return RedirectResponse(url="/user/", status_code=303)
+    except Exception as e:
+        logging.error(f"Error editing user: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")

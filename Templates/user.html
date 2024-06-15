@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Next of kin Information</h2>
+{% if user %}
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <td>{{ user.name }}</td>
+    </tr>
+    <tr>
+        <th>Surname</th>
+        <td>{{ user.surname }}</td>
+    </tr>
+    <tr>
+        <th>Home Address</th>
+        <td>{{ user.home_address }}</td>
+    </tr>
+    <tr>
+        <th>Number</th>
+        <td>{{ user.number }}</td>
+    </tr>
+    <tr>
+        <th>Email</th>
+        <td>{{ user.email }}</td>
+    </tr>
+    <tr>
+        <th>Preferred Contact Method</th>
+        <td>{{ user.preferred_contact_method }}</td>
+    </tr>
+</table>
+<a href="/user/edit/" class="btn btn-primary">Edit User Information</a>
+{% else %}
+<p>No user information available.</p>
+<a href="/user/edit/" class="btn btn-primary">Add User Information</a>
+{% endif %}
+{% endblock %}

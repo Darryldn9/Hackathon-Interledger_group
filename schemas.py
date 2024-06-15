@@ -37,3 +37,20 @@ class Account(AccountBase):
 
     class Config:
         orm_mode = True
+
+class UserBase(BaseModel):
+    name: str
+    surname: str
+    home_address: str
+    number: str
+    email: str
+    preferred_contact_method: str
+
+class UserCreate(UserBase):
+    pass
+
+class User(UserBase):
+    id: int
+
+    class Config:
+        orm_mode = True

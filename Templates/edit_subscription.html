@@ -31,6 +31,13 @@
         </div>
     </div>
     <div class="form-group">
+        <label for="payment_pointer">Payment Pointer</label>
+        <input type="text" id="payment_pointer" name="payment_pointer" class="form-control" value="{{ subscription.payment_pointer }}">
+        <div class="invalid-feedback">
+            Please provide a payment pointer.
+        </div>
+    </div>
+    <div class="form-group">
         <label for="status">Status</label>
         <select id="status" name="status" class="form-control" required>
             <option value="paid" {% if subscription.status == 'paid' %}selected{% endif %}>Paid</option>
@@ -41,6 +48,9 @@
         </div>
     </div>
     <button type="submit" class="btn btn-primary">Update Subscription</button>
+</form>
+<form method="post" action="/subscriptions/delete/{{ subscription.id }}" style="margin-top: 10px;">
+    <button type="submit" class="btn btn-danger">Delete Subscription</button>
 </form>
 <script>
     (function() {

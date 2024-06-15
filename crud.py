@@ -25,6 +25,12 @@ def update_subscription(db: Session, subscription_id: int, subscription: schemas
     db.refresh(db_subscription)
     return db_subscription
 
+def delete_subscription(db: Session, subscription_id: int):
+    db_subscription = db.query(models.Subscription).filter(models.Subscription.id == subscription_id).first()
+    if db_subscription:
+        db.delete(db_subscription)
+        db.commit()
+
 def make_payment(db: Session, subscription_id: int):
     db_subscription = db.query(models.Subscription).filter(models.Subscription.id == subscription_id).first()
     if db_subscription is None:
@@ -64,3 +70,13 @@ def connect_account(db: Session, account_id: int):
     # Here, we'll just print a message to simulate the connection
     print(f"Account {db_account.account_name} connected!")
     return db_account
+
+def create_user(db: Session, user: schemas.UserCreate):
+    db_user = models.User(**user.dict())
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+def get_user(db: Session):
+    return db.query(models.User).first()
